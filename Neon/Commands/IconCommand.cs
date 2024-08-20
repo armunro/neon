@@ -1,13 +1,11 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Drawing;
-using ExCSS;
 using Neon.Domain;
 using Neon.Domain.Config;
 using Serilog;
-using SkiaSharp;
+
 using Svg;
-using Color = System.Drawing.Color;
 
 namespace Neon.Commands;
 
@@ -40,21 +38,14 @@ public class IconCommand : GenesisCommand
 
     private void GenerateSVGIcon(ProjectConfig project)
     {
+        string destination = "icons_";
         SvgDocument doc = SvgDocument.Open("Templates/icon.svg");
         doc.GetElementById<SvgText>("Key").Text = FormatKey(project.Key);
         SvgGradientServer svgGradientServer = doc.GetElementById<SvgGradientServer>("_Linear1");
         string color1 = project.IconGradientColor1;
         string color2 = project.IconGradientColor2;
-
-        if (string.IsNullOrWhiteSpace(color1))
-        {
-            color1 = "#9e0fff";
-        }
-
-        if (string.IsNullOrWhiteSpace(color2))
-        {
-            color2 = "#42e3ff";
-        }
+        if (string.IsNullOrWhiteSpace(color1)) color1 = "#9e0fff";
+        if (string.IsNullOrWhiteSpace(color2)) color2 = "#42e3ff";
         
         svgGradientServer.Stops[0].StopColor = new SvgColourServer(IconHelpers.GetColorFromHex(color1));
         svgGradientServer.Stops[1].StopColor = new SvgColourServer(IconHelpers.GetColorFromHex(color2));
@@ -65,7 +56,8 @@ public class IconCommand : GenesisCommand
             Graphics g = Graphics.FromImage(b);
             doc.Draw(g, new SizeF(iconSize, iconSize));
             _logger.Information("Generating icon for {Project} at {Size}x{Size}", project.Key, iconSize);
-            string savePath = $"{project.Key}_{iconSize}.png";
+            string savePath = Path.Join(destination,  $"{project.Key}_{iconSize}.png");
+            Directory.CreateDirectory(destination);
             b.Save(savePath);
         }
     }

@@ -21,7 +21,7 @@ public class GenesisConfigManager
     {
         string yaml = new SerializerBuilder().WithIndentedSequences().Build().Serialize(_config);
         string configPath = GetConfigPath();
-        _logger.Debug("Config Path: {ConfigPath}", configPath);
+        _logger.Debug("Save Config Path: {ConfigPath}", configPath);
         File.WriteAllText(configPath, yaml);
         _logger.Information("Saved: {ConfigPath}", configPath);
     }
@@ -29,7 +29,7 @@ public class GenesisConfigManager
     public void LoadConfig()
     {
         string configPath = GetConfigPath();
-        _logger.Debug("Config Path: {ConfigPath}", configPath);
+        _logger.Debug("Load Config Path: {ConfigPath}", configPath);
         string yaml = File.ReadAllText(configPath);
         _config = new DeserializerBuilder().Build().Deserialize<GenesisConfig>(yaml);
     }
