@@ -9,13 +9,14 @@ using Svg;
 
 namespace Neon.Commands;
 
-public class IconCommand : GenesisCommand
+public class IconCommand : NeonCommand
 {
-    private readonly GenesisConfigManager _config;
+    private readonly NeonConfigManager _config;
     private readonly ILogger _logger;
-    private static Argument<string> ProjectNameArg = new("project", "The name of the project to generate icons for");
 
-    public IconCommand(GenesisConfigManager config, ILogger logger) : base("icon",
+    private static readonly Argument<string> ProjectNameArg = new("project", "The name of the project to generate icons for");
+
+    public IconCommand(NeonConfigManager config, ILogger logger) : base("icon",
         "Generate product icons in SVG,PNG and ICO formats")
     {
         _config = config;
@@ -31,19 +32,20 @@ public class IconCommand : GenesisCommand
         if (projectArg == "all" || projectArg == "*")
             GenerateAllIcons();
         else
-            GenerateSVGIcon(_config.GetProject(projectArg));
+            GenerateSvgIcon(_config.GetProjectByKey(projectArg));
       
         return Task.FromResult(0);
     }
 
-    private void GenerateSVGIcon(ProjectConfig project)
+    private void GenerateSvgIcon(ProjectConfig project)
     {
         string destination = "icons_";
         SvgDocument doc = SvgDocument.Open("Templates/icon.svg");
         doc.GetElementById<SvgText>("Key").Text = FormatKey(project.Key);
         SvgGradientServer svgGradientServer = doc.GetElementById<SvgGradientServer>("_Linear1");
-        string color1 = project.IconGradientColor1;
-        string color2 = project.IconGradientColor2;
+        string background = project.IconBackground;
+        string color1 = background.Split('|')[0];
+        string color2 = background.Split('|')[1];
         if (string.IsNullOrWhiteSpace(color1)) color1 = "#9e0fff";
         if (string.IsNullOrWhiteSpace(color2)) color2 = "#42e3ff";
         
@@ -69,7 +71,7 @@ public class IconCommand : GenesisCommand
     {
         foreach (ProjectConfig project in _config.Config.Projects)
         {
-            GenerateSVGIcon(project);
+            GenerateSvgIcon(project);
         }
     }
 }

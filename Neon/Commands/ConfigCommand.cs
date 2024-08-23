@@ -4,10 +4,10 @@ using Neon.Domain.Config;
 
 namespace Neon.Commands;
 
-public class ConfigCommand : GenesisCommand
+public class ConfigCommand : NeonCommand
 {
-    private readonly GenesisConfigManager _config;
-    public ConfigCommand(GenesisConfigManager config) : base("config", "Gets/set config values")
+    private readonly NeonConfigManager _config;
+    public ConfigCommand(NeonConfigManager config) : base("config", "Gets/set config values")
     {
         _config = config;
     }

@@ -3,14 +3,14 @@ using YamlDotNet.Serialization;
 
 namespace Neon.Domain.Config;
 
-public class GenesisConfigManager
+public class NeonConfigManager
 {
     private readonly ILogger _logger;
-    GenesisConfig _config = new();
+    RootConfig _config = new();
 
-    public GenesisConfig Config => _config;
+    public RootConfig Config => _config;
     
-    public GenesisConfigManager(ILogger logger)
+    public NeonConfigManager(ILogger logger)
     {
         _logger = logger;
         LoadConfig();
@@ -31,11 +31,11 @@ public class GenesisConfigManager
         string configPath = GetConfigPath();
         _logger.Debug("Load Config Path: {ConfigPath}", configPath);
         string yaml = File.ReadAllText(configPath);
-        _config = new DeserializerBuilder().Build().Deserialize<GenesisConfig>(yaml);
+        _config = new DeserializerBuilder().Build().Deserialize<RootConfig>(yaml);
     }
     
-    public ProjectConfig GetProject(string projectName)
+    public ProjectConfig GetProjectByKey(string projectKey)
     {
-        return _config.Projects.First(p => p.Key == projectName);
+        return _config.Projects.First(p => p.Key == projectKey);
     }
 }
