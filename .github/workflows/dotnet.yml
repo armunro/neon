@@ -17,6 +17,7 @@ jobs:
     steps:
     - name: Prep
       run: |
+          echo "::set-env name=ACTIONS_ALLOW_UNSECURE_COMMANDS::true"
           echo "::set-env name=NUGET_URL::https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
     - uses: actions/checkout@v4
     - name: Setup .NET
