@@ -24,6 +24,8 @@ jobs:
         source-url: ${{ env.NUGET_URL }}
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       with:
         dotnet-version: 8.0.x
     - name: Restore dependencies
