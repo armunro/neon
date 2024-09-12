@@ -8,28 +8,16 @@ using Neon.Domain.Config;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 
-CliApp app = new CliApp();
+CliApp app = new();
 
 app.RegisterDependencies(builder =>
 {
     builder.RegisterCosmicCommands("[Ne]on - A simple command line tool for devops.");
     builder.RegisterCosmicLogging();
-    
-    builder.RegisterType<ConfigCommand>().AsSelf();
-    builder.RegisterType<IconCommand>().AsSelf();
-    builder.RegisterType<InitCommand>().AsSelf();
-    builder.RegisterType<GoCommand>().AsSelf();
     builder.RegisterType<NeonConfigManager>().AsSelf().SingleInstance();
     builder.RegisterType<RootCommand>().SingleInstance().AsSelf();
     builder.RegisterType<NeonConfigManager>().AsSelf().SingleInstance();
 });
-
-
-
-
-
-
-
 
 app.StartsWith(container =>
 {

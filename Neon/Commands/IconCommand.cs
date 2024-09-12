@@ -16,7 +16,8 @@ public class IconCommand : CliCommand
     private readonly NeonConfigManager _config;
     private readonly ILogger _logger;
 
-    private static readonly Argument<string> ProjectNameArg =
+    [CliArgument("project", "The name of the project to generate icons for. Accepts * or all for all projects.")]
+    public static readonly Argument<string> ProjectNameArg =
         new("project", "The name of the project to generate icons for");
 
     public IconCommand(NeonConfigManager config, ILogger logger)
@@ -46,11 +47,26 @@ public class IconCommand : CliCommand
             Bitmap b = new Bitmap(iconSize, iconSize);
             Graphics g = Graphics.FromImage(b);
             doc.Draw(g, new SizeF(iconSize, iconSize));
-            _logger.Information("Generating icon for {Project} at {Size}x{Size}", project.Key, iconSize);
-            string savePath = Path.Join(destination, $"{project.Key}_{iconSize}.png");
-            Directory.CreateDirectory(destination);
-            b.Save(savePath);
+            foreach (string variant in _config.Config.Icon.Variants)
+            {
+                _logger.Information("Generating icon for {Project} at {Size}x{Size}", project.Key, iconSize);
+                string savePath = Path.Join(destination, $"{project.Key.ToLower()}_{iconSize}.png");
+                Directory.CreateDirectory(destination);
+                b.Save(savePath);
+            }
+
+            foreach (string variant in _config.Config.Icon.Variants)
+            {
+                _logger.Information("Generating icon variant for {Project} at {Size}x{Size}", project.Key, iconSize);
+                string savePath = Path.Join(destination, "favicon", variant.Replace("{size}", iconSize.ToString()). Replace("{key}", project.Key.ToLower()));
+                Directory.CreateDirectory(Path.GetDirectoryName(savePath));
+                b.Save(savePath);
+            }
         }
+
+        string svgBase = Path.Join(destination, "svg");
+        Directory.CreateDirectory(svgBase);
+        File.WriteAllText(Path.Join(svgBase, $"{project.Key.ToLower()}.svg"), doc.GetXML());
     }
 
     private string FormatKey(string projectKey) =>
@@ -67,7 +83,7 @@ public class IconCommand : CliCommand
     protected override Task<int> ExecuteCommand(CliCommandContext context)
     {
         string projectArg = context.Argument<string>(ProjectNameArg).ToLower();
-        if (projectArg == "all" || projectArg == "*")
+        if (projectArg is "all" or "*")
             GenerateAllIcons();
         else
             GenerateSvgIcon(_config.GetProjectByKey(projectArg));

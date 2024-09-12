@@ -8,6 +8,7 @@
         <AssemblyName>Neon</AssemblyName>
         <RootNamespace>Neon</RootNamespace>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <RepositoryUrl>https://github.com/armunro/neon</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
