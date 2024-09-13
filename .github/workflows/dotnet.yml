@@ -10,19 +10,15 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
-    env:
-      NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      NUGET_URL: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '3.1.x'
-        source-url: https://nuget.pkg.github.com/armunro/index.json
-      env:
-        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-    - name: Build
-      run: dotnet build
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '3.1.x'
+          source-url: https://nuget.pkg.github.com/armunro/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: Build
+        run: dotnet build
