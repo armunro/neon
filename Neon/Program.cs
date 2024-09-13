@@ -19,13 +19,13 @@ app.RegisterDependencies(builder =>
     builder.RegisterType<NeonConfigManager>().AsSelf().SingleInstance();
 });
 
-app.StartsWith(container =>
+app.AddConfigStep(app =>
 {
-    RootCommand rootCommand = container.Resolve<RootCommand>();
-    Command icon = container.Resolve<IconCommand>();
-    Command config = container.Resolve<ConfigCommand>();
-    Command init = container.Resolve<InitCommand>();
-    Command go = container.Resolve<GoCommand>();
+    RootCommand rootCommand = app.Container.Resolve<RootCommand>();
+    Command icon = app.Container.Resolve<IconCommand>();
+    Command config = app.Container.Resolve<ConfigCommand>();
+    Command init = app.Container.Resolve<InitCommand>();
+    Command go = app.Container.Resolve<GoCommand>();
     rootCommand.AddCommand(icon);
     rootCommand.AddCommand(init);
     rootCommand.AddCommand(config);
